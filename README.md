@@ -7,8 +7,8 @@
   - Run code comandline: python main.py
   - With default code, we will create data folder to save all file downloaded through id object
   - Logs of project will save in logs.json with format:
-        + "DONE__object_id": success to download
-        + "ERROR__object_id": faild to download
+        - "DONE__object_id": success to download
+        - "ERROR__object_id": faild to download
 
 > Data Folder Structure:
 All data will save in data/ folder
