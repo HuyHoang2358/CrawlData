@@ -39,7 +39,7 @@ def main():
     object_id = []
     with open(OBJECT_ID_FILE, 'r') as f:
         lines = f.readlines()
-    for line in lines[:1]:
+    for line in lines:
         object_id.append(line[:-1])
     
     print(f"Total line in object_id.txt file: {len(object_id)}")
