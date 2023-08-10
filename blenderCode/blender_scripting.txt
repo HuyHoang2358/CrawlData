@@ -1,0 +1,60 @@
+import bpy
+from bpy import context, data, ops
+import math
+import os
+
+def convert2glb(obj_id):
+    obj_folder = "E:/Projects/DigitalTwin/GitHub/CrawlData/data/obj/"
+    texture_folder = "E:/Projects/DigitalTwin/GitHub/CrawlData/data/texture/"
+    output_folder = "E:/Projects/DigitalTwin/GitHub/CrawlData/data/output/"
+    
+    obj_file_path = obj_folder + obj_id +".obj"
+    texture_file_path = texture_folder + obj_id + ".png"
+    output_glb_file_path = output_folder + obj_id + ".glb"
+    
+
+    # Import file OBJ
+    bpy.ops.import_scene.obj(filepath=obj_file_path)
+
+    # Lấy đối tượng mesh sau khi import
+    mesh_obj = bpy.context.selected_objects[0]
+
+
+    # Adding the texture
+    mat = bpy.data.materials.new(name="New_Mat")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    texImage = mat.node_tree.nodes.new('ShaderNodeTexImage')
+    texImage.image = bpy.data.images.load(texture_file_path)
+    mat.node_tree.links.new(bsdf.inputs['Base Color'], texImage.outputs['Color'])
+
+
+    # Adding mat to obj            
+    if mesh_obj.data.materials:
+        mesh_obj.data.materials[0] = mat
+    else:
+        mesh_obj.data.materials.append(mat)     
+
+    # Change the ViewPort Shading to RENDERED    
+    #for area in bpy.context.screen.areas: 
+    #    if area.type == 'VIEW_3D':
+    #        for space in area.spaces: 
+    #            if space.type == 'VIEW_3D':
+    #                space.shading.type = 'RENDERED'
+                
+
+    bpy.ops.export_scene.gltf(filepath=output_glb_file_path, export_format="GLB")
+    
+    # Xóa đối tượng đã import (tuỳ chọn)
+    bpy.ops.object.select_all(action="DESELECT")
+    mesh_obj.select_set(True)
+    bpy.ops.object.delete()
+
+#list_id = ["5aab94dff586401e884e490e", "5a685ebbe406ad3f0cc17755", "5adefb8092e67729c4eee500"]
+list_id = os.listdir("E:/Projects/DigitalTwin/GitHub/CrawlData/data/obj/")
+for id in list_id:
+    try:
+        convert2glb(id[:-4])
+    except:
+        pass
+    #break
